@@ -1,5 +1,5 @@
 FROM maven
-ENV SPARQL_ENDPOINT "http://172.31.64.71:8001/openrdf-sesame"
+ENV SPARQL_ENDPOINT "http://localhost:8890/sparql"
 ENV SPARQL_GRAPH "http://mu.semte.ch/application"
 COPY . /app
 WORKDIR /app
