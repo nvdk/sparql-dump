@@ -47,11 +47,11 @@ public class Main {
 
     try {
       URI applicationGraph = ValueFactoryImpl.getInstance().createURI(graph);
-      TupleQueryResult result = con.prepareTupleQuery(QueryLanguage.SPARQL, "SELECT (COUNT(*) as ?count) WHERE {GRAPH <" + applicationGraph.toString() + "> { ?s ?p ?o }}").evaluate();
+      TupleQueryResult result = con.prepareTupleQuery(QueryLanguage.SPARQL, "SELECT (COUNT(DISTINCT(?s) as ?count) WHERE {GRAPH <" + applicationGraph.toString() + "> { ?s ?p ?o }}").evaluate();
       long amount = new Long(result.next().getBinding("count").getValue().stringValue());
       long offset = 0;
       long batchSize = 50000;
-      logger.info("dumping " + amount + " triples in batches of " + batchSize);
+      logger.info("dumping " + amount + " resources in batches of " + batchSize);
       do {
         try {
           String filename = "etms-" + offset + ".ttl";
