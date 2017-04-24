@@ -66,7 +66,7 @@ public class Main {
           con.prepareGraphQuery(
               QueryLanguage.SPARQL, query).evaluate(writer);
           offset = offset + batchSize;
-          System.out.println("wrote  " + batchSize + " triples to " + filename);
+          logger.info("wrote  " + batchSize + " triples to " + filename);
           stream.close();
         } catch (Exception e) {
           logger.warn("failed to retrieve triples from offset" + offset + " with batchsize " + batchSize);
