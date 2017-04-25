@@ -47,7 +47,7 @@ public class Main {
 
     try {
       URI applicationGraph = ValueFactoryImpl.getInstance().createURI(graph);
-      TupleQueryResult result = con.prepareTupleQuery(QueryLanguage.SPARQL, "SELECT (COUNT(DISTINCT(?s) as ?count) WHERE {GRAPH <" + applicationGraph.toString() + "> { ?s ?p ?o }}").evaluate();
+      TupleQueryResult result = con.prepareTupleQuery(QueryLanguage.SPARQL, "SELECT (COUNT(DISTINCT(?s)) as ?count) WHERE {GRAPH <" + applicationGraph.toString() + "> { ?s a [] }}").evaluate();
       long amount = new Long(result.next().getBinding("count").getValue().stringValue());
       long offset = 0;
       long batchSize = 50000;
@@ -61,7 +61,7 @@ public class Main {
               "WHERE { " +
               "GRAPH <" + applicationGraph.toString() + "> {" +
               "?s ?p ?o. " +
-              "{select ?s WHERE {?s a []} ORDER BY ?s LIMIT " + batchSize + " OFFSET " + offset + " }" +
+              "{select DISTINCT ?s WHERE {?s a []} ORDER BY ?s LIMIT " + batchSize + " OFFSET " + offset + " }" +
               "}}";
           con.prepareGraphQuery(
               QueryLanguage.SPARQL, query).evaluate(writer);
