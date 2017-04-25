@@ -26,9 +26,15 @@ public class Main {
     String graph = System.getenv("SPARQL_GRAPH");
     String user = System.getenv("SPARQL_USER");
     String password = System.getenv("SPARQL_PASSWORD");
+
     long batchSize = 50000;
     if (null != System.getenv("SPARQL_BATCHSIZE")) {
       batchSize = new Long(System.getenv("SPARQL_BATCHSIZE"));
+    }
+
+    long offset = 0;
+    if (null != System.getenv("SPARQL_OFFSET")) {
+      offset = new Long(System.getenv("SPARQL_OFFSET"));
     }
 
     if (null == graph || null == sparqlEndpoint) {
@@ -53,7 +59,6 @@ public class Main {
       URI applicationGraph = ValueFactoryImpl.getInstance().createURI(graph);
       TupleQueryResult result = con.prepareTupleQuery(QueryLanguage.SPARQL, "SELECT (COUNT(*) as ?count) WHERE {GRAPH <" + applicationGraph.toString() + "> { ?s ?p ?o }}").evaluate();
       long amount = new Long(result.next().getBinding("count").getValue().stringValue());
-      long offset = 0;
       logger.info("dumping " + amount + " triples in batches of " + batchSize);
       do {
         try {
