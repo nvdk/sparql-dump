@@ -26,6 +26,10 @@ public class Main {
     String graph = System.getenv("SPARQL_GRAPH");
     String user = System.getenv("SPARQL_USER");
     String password = System.getenv("SPARQL_PASSWORD");
+    long batchSize = 50000;
+    if (null != System.getenv("SPARQL_BATCHSIZE")) {
+      batchSize = new Long(System.getenv("SPARQL_BATCHSIZE"));
+    }
 
     if (null == graph || null == sparqlEndpoint) {
       logger.error("SPARQL_ENDPOINT and/or SPARQL_GRAPH ENV variable are not set");
@@ -47,11 +51,10 @@ public class Main {
 
     try {
       URI applicationGraph = ValueFactoryImpl.getInstance().createURI(graph);
-      TupleQueryResult result = con.prepareTupleQuery(QueryLanguage.SPARQL, "SELECT (COUNT(DISTINCT(?s)) as ?count) WHERE {GRAPH <" + applicationGraph.toString() + "> { ?s a [] }}").evaluate();
+      TupleQueryResult result = con.prepareTupleQuery(QueryLanguage.SPARQL, "SELECT (COUNT(*) as ?count) WHERE {GRAPH <" + applicationGraph.toString() + "> { ?s ?p ?o }}").evaluate();
       long amount = new Long(result.next().getBinding("count").getValue().stringValue());
       long offset = 0;
-      long batchSize = 50000;
-      logger.info("dumping " + amount + " resources in batches of " + batchSize);
+      logger.info("dumping " + amount + " triples in batches of " + batchSize);
       do {
         try {
           String filename = "etms-" + offset + ".ttl";
@@ -61,8 +64,8 @@ public class Main {
               "WHERE { " +
               "GRAPH <" + applicationGraph.toString() + "> {" +
               "?s ?p ?o. " +
-              "{select DISTINCT ?s WHERE {?s a []} ORDER BY ?s LIMIT " + batchSize + " OFFSET " + offset + " }" +
-              "}}";
+              "}}" +
+              " LIMIT " + batchSize + " OFFSET " + offset;
           con.prepareGraphQuery(
               QueryLanguage.SPARQL, query).evaluate(writer);
           offset = offset + batchSize;
