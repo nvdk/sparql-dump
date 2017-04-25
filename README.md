@@ -27,6 +27,8 @@ sparql-dump can/should be configured using ENV variables.
 
 *SPARQL_GRAPH*: required, specify the graph you wish to dump
 
-*SPARQL_USER*: optional, user to authenticate with. Note that both user and password are required for authentication.
+*SPARQL_USER*: optional, default:null, user to authenticate with. Note that both user and password are required for authentication.
 
-*SPARQL_PASSWORD*: optional, password to authenticate with. Note that both user and password are required for authentication.
+*SPARQL_PASSWORD*: optional, default:null, password to authenticate with. Note that both user and password are required for authentication.
+
+*SPARQL_BATCHSIZE*: optional, default: 50000, amount of triples to retrieve per batch
